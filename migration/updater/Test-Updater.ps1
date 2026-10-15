@@ -110,7 +110,7 @@ try {
     Assert ((Get-Content -LiteralPath $sentinel -Raw) -eq 'persistent settings') 'Main touched experimental data.'
     Assert (Test-Path -LiteralPath (Join-Path $ChannelRoot 'state.json.bak')) 'Experimental state backup is missing from its channel.'
     Assert (!(Test-Path -LiteralPath (Join-Path $Root 'state.json.bak'))) 'Channels share a state backup.'
-    $Branch = 'main'
+    $Branch = 'alpha'
     Expect-Failure { Select-Channel $Branch }
     Write-Host 'PASS: branch-separated install, data and rollback; offline launch; locking and validation.'
 } finally {
