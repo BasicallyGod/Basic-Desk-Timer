@@ -1,2 +1,2 @@
 @echo off
-start "" "%~dp0BasicsAdvancedTimer.Preview.exe" --demo
+start "" "%~dp0BasicsDeskTimer.Preview.exe" --demo

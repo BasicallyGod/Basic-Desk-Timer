@@ -26,7 +26,7 @@ $ChoicePath = Join-Path $Root 'last-branch.txt'
 # Each channel has its own update state and data folder.
 
 function Get-InstalledText([string]$Name) {
-    if ($Name -notin @('experimental', 'alpha')) { return 'Choose Experimental or Alpha.' }
+    if ($Name -notin @('experimental', 'main')) { return 'Choose Experimental or Main.' }
     $statePath = Join-Path (Join-Path (Join-Path $Root 'channels') $Name) 'state.json'
     if (!(Test-Path -LiteralPath $statePath)) { return 'Nothing installed yet.' }
     try {
@@ -67,9 +67,9 @@ function Fill-Branches {
     $form.Cursor = 'WaitCursor'; $form.Refresh()
     $wanted = if ($combo.Text) { $combo.Text } else { Read-LastBranch }
     $combo.Items.Clear()
-    $combo.Items.AddRange([object[]]@('experimental', 'alpha'))
-    $hint.Text = 'Experimental is for daily testing; Alpha is for unstable changes. Launch current works offline.'
-    $combo.SelectedItem = if ($wanted -in @('experimental', 'alpha')) { $wanted } else { 'experimental' }
+    $combo.Items.AddRange([object[]]@('experimental', 'main'))
+    $hint.Text = 'Experimental is for daily testing; Main is for unstable changes. Launch current works offline.'
+    $combo.SelectedItem = if ($wanted -in @('experimental', 'main')) { $wanted } else { 'experimental' }
     $status.Text = Get-InstalledText $combo.Text
     $form.Cursor = 'Default'
 }
@@ -78,7 +78,7 @@ function Invoke-Worker([string]$Mode) {
     try {
     if (!(Test-Path -LiteralPath $Worker -PathType Leaf)) { throw 'Update-TestBuild.ps1 is missing. Extract the complete updater folder.' }
     $branch = $combo.Text.Trim()
-    if ($branch -notin @('experimental', 'alpha')) { [void][System.Windows.Forms.MessageBox]::Show('That is not a usable branch name.', $form.Text); return }
+    if ($branch -notin @('experimental', 'main')) { [void][System.Windows.Forms.MessageBox]::Show('That is not a usable branch name.', $form.Text); return }
     $null = New-Item -ItemType Directory -Path $Root -Force
     [IO.File]::WriteAllText($ChoicePath, $branch)
     # The worker's console stays open on an error so the message can be read, and closes by itself after a good launch.
@@ -102,11 +102,11 @@ $script:SmokeFailure = $null
 if ($SmokeTest) {
     $form.Add_Shown({
         try {
-            if (!$form.Visible -or $combo.Items.Count -ne 2 -or $combo.Text -notin @('experimental', 'alpha')) { throw 'Picker did not initialize.' }
-            $combo.SelectedItem = 'alpha'
-            if ($status.Text -ne (Get-InstalledText 'alpha')) { throw 'Channel selection did not update status.' }
+            if (!$form.Visible -or $combo.Items.Count -ne 2 -or $combo.Text -notin @('experimental', 'main')) { throw 'Picker did not initialize.' }
+            $combo.SelectedItem = 'main'
+            if ($status.Text -ne (Get-InstalledText 'main')) { throw 'Channel selection did not update status.' }
             $combo.SelectedItem = 'experimental'
-            Write-Host 'PASS: Windows Forms picker shown; alpha and experimental selectable without GitHub.'
+            Write-Host 'PASS: Windows Forms picker shown; main and experimental selectable without GitHub.'
         } catch { $script:SmokeFailure = $_ }
         finally { $form.Close() }
     })

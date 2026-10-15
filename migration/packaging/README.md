@@ -6,8 +6,8 @@ This builds the Windows x64 MSIX that is submitted to the Microsoft Store from `
 
 The dedicated GitHub Actions workflow `.github/workflows/microsoft-store-msix.yml` is configured to build the unsigned Store candidate on a successful push to `main`. On pull requests targeting `main`, it tests the code without producing a release package. Development channels use a separate portable ZIP workflow instead.
 
-- `BasicsAdvancedTimer-MSIX-Store` contains **only** `BasicsAdvancedTimer-Store-unsigned.msix`, an unsigned package using the Partner Center identity. This is the file to upload under **Packages** in the Store submission.
-- The test-only signed `BasicsAdvancedTimer-Dev.msix` and public certificate are not built by CI any more. Build them locally for development as described below. Neither belongs in Partner Center. The private signing key is never exported.
+- `BasicsDeskTimer-MSIX-Store` contains **only** `BasicsDeskTimer-Store-unsigned.msix`, an unsigned package using the Partner Center identity. This is the file to upload under **Packages** in the Store submission.
+- The test-only signed `BasicsDeskTimer-Dev.msix` and public certificate are not built by CI any more. Build them locally for development as described below. Neither belongs in Partner Center. The private signing key is never exported.
 
 ## Safe local installation test
 
@@ -15,8 +15,8 @@ The dedicated GitHub Actions workflow `.github/workflows/microsoft-store-msix.ym
 2. On a Windows development PC, run `./migration/packaging/build-msix.ps1 -BuildNumber 1` and use the signed development files it creates. This needs .NET 8 and the Windows SDK.
 3. On a Windows test machine, in an **administrator** PowerShell terminal (Windows only trusts a sideloaded package whose certificate is in the machine store) run:
    ```powershell
-   Import-Certificate -FilePath .\BasicsAdvancedTimer-Dev.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople
-   Add-AppxPackage -Path .\BasicsAdvancedTimer-Dev.msix
+   Import-Certificate -FilePath .\BasicsDeskTimer-Dev.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+   Add-AppxPackage -Path .\BasicsDeskTimer-Dev.msix
    ```
 4. Launch **Basic's Advanced Timer** from the Start menu. Confirm the tray icon, account switching, persistence across restart, timeline editing, undo, CSV export, and data backups.
 5. Check **Settings > Apps > Startup** (or Task Manager's Startup apps tab) after launching once. The packaged startup task is disabled by default. The right-click menu's **Start with Windows** checkbox turns that task on and off through the Windows startup-task API (the registry entry used by the portable build would be virtualised and never run). If you switch it off in Windows Settings, the app cannot switch it back on and says so; turn it on there instead.
@@ -28,7 +28,7 @@ Do **not** expect a developer MSIX installation to be updated in place by the ev
 
 The portable ZIP **still** saves to `migration-data` next to its executable (or the `--data-dir` location you explicitly set).
 
-An installed MSIX saves to its own writable per-user data area using `Environment.SpecialFolder.LocalApplicationData` and the subfolder `BasicsAdvancedTimer`. Windows may **virtualise** the physical path under `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalCache\Local\`. The database, settings, backups, and CSV exports stay together.
+An installed MSIX saves to its own writable per-user data area using `Environment.SpecialFolder.LocalApplicationData` and the subfolder `BasicsDeskTimer`. Windows may **virtualise** the physical path under `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalCache\Local\`. The database, settings, backups, and CSV exports stay together.
 
 **Data is not copied automatically.** Never point two running timers at the same SQLite database. Test with fresh data until the packaged app's exact data location has been confirmed, then copy your backed-up data *with both apps closed* if you deliberately want to migrate. Do not delete the old portable folder until you've confirmed all saved records and backups.
 
@@ -50,13 +50,13 @@ The packaging script publishes the Avalonia app with a production-style executab
 When a developer account is available:
 
 1. The Partner Center **Product identity** for this app is already configured in the CI workflow:
-   - `Package/Identity/Name`: `Basically.BasicsAdvancedTimer`
+   - `Package/Identity/Name`: `Basically.BasicsDeskTimer`
    - `Package/Identity/Publisher`: `CN=BF422802-B4CA-4B00-A09A-2EDA3315C0DE`
    - `Package/Properties/PublisherDisplayName`: `Basically`
-2. Following approved promotion into `main`, download `BasicsAdvancedTimer-MSIX-Store` from a **successful main GitHub Actions run**; extract its ZIP and upload **only** `BasicsAdvancedTimer-Store-unsigned.msix` to the Store submission's **Packages** section. Do not upload `.cer` files.
+2. Following approved promotion into `main`, download `BasicsDeskTimer-MSIX-Store` from a **successful main GitHub Actions run**; extract its ZIP and upload **only** `BasicsDeskTimer-Store-unsigned.msix` to the Store submission's **Packages** section. Do not upload `.cer` files.
 3. To build that candidate locally on Windows (the Store signs the submitted MSIX):
    ```powershell
-   ./migration/packaging/build-msix.ps1 -BuildNumber 2 -OutputDirectory artifacts/msix -UnsignedForStore -PackageName 'Basically.BasicsAdvancedTimer' -Publisher 'CN=BF422802-B4CA-4B00-A09A-2EDA3315C0DE' -PublisherDisplayName 'Basically'
+   ./migration/packaging/build-msix.ps1 -BuildNumber 2 -OutputDirectory artifacts/msix -UnsignedForStore -PackageName 'Basically.BasicsDeskTimer' -Publisher 'CN=BF422802-B4CA-4B00-A09A-2EDA3315C0DE' -PublisherDisplayName 'Basically'
    ```
 4. Check the Store artwork in `StoreAssets` (the app icon at each size) and run the Windows App Certification Kit. Confirm display-name reservation, screenshots, listing text, privacy/support details, licensing, data portability and update behaviour before submission.
 5. Submit the final package in Partner Center only after testing. The Store signs Store-distributed MSIX packages; it **does not sign** unsigned portable EXEs.

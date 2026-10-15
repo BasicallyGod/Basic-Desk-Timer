@@ -8,10 +8,10 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-$Repository = 'BasicallyGod/Basic-Advanced-Timer'
+$Repository = 'BasicallyGod/Basic-Desk-Timer'
 $Workflow = 'avalonia-preview.yml'
 $ArtifactName = $null
-$Executable = 'BasicsAdvancedTimer.Preview.exe'
+$Executable = 'BasicsDeskTimer.Preview.exe'
 $UpdaterDirectory = $PSScriptRoot
 # Handed to the timer so its Start with Windows setting can point back here and survive updates.
 $UpdaterScript = Join-Path $PSScriptRoot 'Update-TestBuild.ps1'
@@ -29,12 +29,12 @@ function Assert-BranchName([string]$Name) {
 
 function Select-Channel([string]$Name) {
     Assert-BranchName $Name
-    if ($Name -notin @('experimental', 'alpha')) { throw 'Select experimental or alpha. Stable releases are installed through Microsoft Store.' }
+    if ($Name -notin @('experimental', 'main')) { throw 'Select experimental or main.' }
     $script:ChannelRoot = Join-Path (Join-Path $Root 'channels') $Name
     $script:Versions = Join-Path $ChannelRoot 'versions'
     $script:Data = Join-Path $ChannelRoot 'data'
     $script:StatePath = Join-Path $ChannelRoot 'state.json'
-    $script:ArtifactName = "BasicsAdvancedTimer-Windows-$Name"
+    $script:ArtifactName = "BasicsDeskTimer-Windows-$Name"
 }
 
 function Invoke-GhJson([string]$Endpoint) {
@@ -44,8 +44,8 @@ function Invoke-GhJson([string]$Endpoint) {
 }
 
 function Assert-Build([string]$Folder) {
-    foreach ($name in @($Executable, 'BasicsAdvancedTimer.Preview.dll', 'BasicsAdvancedTimer.Preview.deps.json',
-            'BasicsAdvancedTimer.Preview.runtimeconfig.json', 'Timer.Core.dll', 'Timer.Storage.dll', 'coreclr.dll', 'test-build-support.json')) {
+    foreach ($name in @($Executable, 'BasicsDeskTimer.Preview.dll', 'BasicsDeskTimer.Preview.deps.json',
+            'BasicsDeskTimer.Preview.runtimeconfig.json', 'Timer.Core.dll', 'Timer.Storage.dll', 'coreclr.dll', 'test-build-support.json')) {
         $file = Join-Path $Folder $name
         if (!(Test-Path -LiteralPath $file -PathType Leaf) -or (Get-Item -LiteralPath $file).Length -eq 0) {
             throw "Invalid portable build: missing or empty $name. Current build is unchanged."

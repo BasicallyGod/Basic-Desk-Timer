@@ -32,7 +32,7 @@ try {
     $Worker = Join-Path $fixture 'Update-TestBuild.ps1'
     [IO.File]::WriteAllText($Worker, 'param($Mode, $Branch); [IO.File]::WriteAllText((Join-Path $PSScriptRoot "received.txt"), "$Mode|$Branch"); exit 0')
     $Root = Join-Path $fixture 'test-install'; $ChoicePath = Join-Path $Root 'last-branch.txt'
-    $combo = [pscustomobject]@{ Text = 'alpha' }; $status = [pscustomobject]@{ Text = '' }
+    $combo = [pscustomobject]@{ Text = 'main' }; $status = [pscustomobject]@{ Text = '' }
     function Show-UpdaterError($Record) { throw $Record }
     function Start-Process {
         param($FilePath, $WindowStyle, $ArgumentList)
@@ -41,7 +41,7 @@ try {
         $process = Microsoft.PowerShell.Management\Start-Process -FilePath $FilePath -WindowStyle Hidden -ArgumentList $ArgumentList -PassThru
         Wait-Check $process
     }
-    foreach ($branch in @('alpha', 'experimental')) {
+    foreach ($branch in @('main', 'experimental')) {
         $combo.Text = $branch
         foreach ($mode in @('Update', 'Launch', 'Rollback')) {
             Invoke-Worker $mode

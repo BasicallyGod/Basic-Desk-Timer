@@ -2,6 +2,8 @@
 
 Notes for contributors and coding assistants. The application is a C# Avalonia desktop app on .NET 8, always on top, for tracking time against client accounts and preparing timesheets. It must run without installs or administrator rights. The earlier PowerShell/WinForms app (v2.32) was removed from the tree and lives in Git history.
 
+This repository is the desk app, split from `BasicallyGod/Basic-Advanced-Timer` (its `alpha` branch, with full history). The two are separate applications with their own names (`BasicsDeskTimer`), data folders, autostart entries, packaging identity and updater feed, so they never open each other's data. Both run on the shared engine packages from `BasicallyGod/Basic-Timer-Core`. Its channels are `main` and `experimental` only (see `BRANCHES.md`).
+
 ## Layout
 
 | Path | Role |
@@ -12,8 +14,8 @@ Notes for contributors and coding assistants. The application is a C# Avalonia d
 | `migration/tests/Timer.Desktop.Tests` | xUnit tests, including headless Avalonia tests of production windows. |
 | `migration/updater` | Standalone Windows test-build updater with rollback. |
 | `migration/packaging` | MSIX packaging for the Microsoft Store (manifest template, `build-msix.ps1`, and `StoreAssets`, the tile and logo PNGs cut from the app icon). Packaged builds keep data under `%LOCALAPPDATA%` via `PackageEnvironment`; portable builds keep it beside the exe. Store builds compile for `net8.0-windows10.0.19041.0` (`StorePackage=true`, `STORE_PACKAGE` defined) so the Start with Windows menu item can use the WinRT startup task; everyday builds stay `net8.0`. |
-| `.github/workflows/microsoft-store-msix.yml` | Store release workflow for `main`. Pull requests compile the Store target and run tests only; a push to `main` builds the unsigned `BasicsAdvancedTimer-MSIX-Store` package. |
-| `.github/workflows/avalonia-preview.yml` | Development builds for `experimental` and `alpha`: updater tests, then app tests on Windows (Linux and macOS are left out for now), then a channel-named portable Windows ZIP. |
+| `.github/workflows/microsoft-store-msix.yml` | Store package workflow, run by hand only for now (the desk app is not in the Store). |
+| `.github/workflows/avalonia-preview.yml` | Builds for `main` and `experimental`: updater tests, then app tests on Windows (Linux and macOS are left out for now), then a channel-named portable Windows ZIP. |
 | `BRANCHES.md` | The three release channels and how changes are promoted. |
 | `README.md`, `migration/README.md`, `CHANGELOG.md` | Overview, user guide and architecture, history. |
 
@@ -21,7 +23,7 @@ The `migration` folder name is historical and kept so updater and workflow paths
 
 ## Branches and releases
 
-`main` is the Store release, `experimental` is everyday testing and `alpha` is for risky prototypes. Work on `experimental` or a `feature/...` branch from it, promote alpha to experimental and experimental to main by pull request, and never push straight to `main`. Builds show their channel beside the version, and only non-Store builds offer the sample-data demo. The updater serves experimental and alpha only, each with its own data, versions and backups. See `BRANCHES.md`.
+`main` is the tested release line and `experimental` is everyday testing; there is no `alpha` and no Store build yet. Work on `experimental` or a `feature/...` branch from it, promote experimental to main by pull request, and never push straight to `main`. The updater serves experimental and main only, each with its own data, versions and backups. See `BRANCHES.md`.
 
 ## Behaviour to preserve
 
@@ -85,7 +87,7 @@ Each theme is a `ThemeDefinition` (name, Light or Dark base, colour tokens, bloc
 
 ## Keeping builds few
 
-Each merge into `experimental` or `alpha` builds and stores a Windows ZIP (kept 14 days), and a pull request run adds tests on Windows. The owner tests only every few versions, so batch work: keep related changes on one `feature/...` branch, open one pull request for the lot, and sync `experimental` only for a candidate. Before opening a pull request for a small change, ask whether it can wait for the next one. Rendered previews upload only when a test fails or a run is started by hand.
+Each merge into `experimental` or `main` builds and stores a Windows ZIP (kept 14 days), and a pull request run adds tests on Windows. The owner tests only every few versions, so batch work: keep related changes on one `feature/...` branch, open one pull request for the lot, and sync `experimental` only for a candidate. Before opening a pull request for a small change, ask whether it can wait for the next one. Rendered previews upload only when a test fails or a run is started by hand.
 
 ## Checking changes
 

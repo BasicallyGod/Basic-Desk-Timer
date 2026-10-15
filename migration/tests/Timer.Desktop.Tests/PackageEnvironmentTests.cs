@@ -15,10 +15,10 @@ public sealed class PackageEnvironmentTests
     [Fact]
     public void PackagedBuildNeverWritesInsideItsInstallDirectory()
     {
-        var install = Path.Combine("Program Files", "WindowsApps", "BasicsAdvancedTimer");
+        var install = Path.Combine("Program Files", "WindowsApps", "BasicsDeskTimer");
         var profile = Path.Combine("users", "profile", "AppData", "Local");
         var folder = TimerDataFolders.DefaultDirectory(install, profile, true);
-        Assert.Equal(Path.Combine(profile, "BasicsAdvancedTimer"), folder);
+        Assert.Equal(Path.Combine(profile, "BasicsDeskTimer"), folder);
         Assert.False(folder.StartsWith(install, StringComparison.OrdinalIgnoreCase));
     }
 

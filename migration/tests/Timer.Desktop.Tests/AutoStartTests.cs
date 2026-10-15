@@ -14,7 +14,7 @@ public sealed class AutoStartTests
         public void Set(string name, string command) { if (Fail) throw new UnauthorizedAccessException("Blocked by policy."); Values[name] = command; }
         public void Remove(string name) => Values.Remove(name);
     }
-    private static readonly string Exe = Path.Combine(Path.GetTempPath(), "Timer folder", "BasicsAdvancedTimer.Preview.exe");
+    private static readonly string Exe = Path.Combine(Path.GetTempPath(), "Timer folder", "BasicsDeskTimer.Preview.exe");
 
     [Fact]
     public void TurnsOnAndOffAndQuotesThePath()
@@ -39,7 +39,7 @@ public sealed class AutoStartTests
     public void AMovedProgramOrDifferentFolderCountsAsOffUntilSwitchedOnAgain()
     {
         var registry = new FakeRegistry(); new AutoStartSetting(registry, Exe, null).Set(true);
-        var moved = new AutoStartSetting(registry, Path.Combine(Path.GetTempPath(), "Elsewhere", "BasicsAdvancedTimer.Preview.exe"), null);
+        var moved = new AutoStartSetting(registry, Path.Combine(Path.GetTempPath(), "Elsewhere", "BasicsDeskTimer.Preview.exe"), null);
         Assert.False(moved.IsEnabled); moved.Set(true); Assert.True(moved.IsEnabled);
         Assert.False(new AutoStartSetting(registry, moved.Command!.Trim('"'), "other").IsEnabled);
     }
@@ -68,11 +68,11 @@ public sealed class AutoStartTests
     {
         var script = Path.Combine(Path.GetTempPath(), "Updater folder", "Update-TestBuild.ps1");
         var registry = new FakeRegistry();
-        var first = new AutoStartSetting(registry, Path.Combine(Path.GetTempPath(), "versions", "run-1", "BasicsAdvancedTimer.Preview.exe"), "data", script);
+        var first = new AutoStartSetting(registry, Path.Combine(Path.GetTempPath(), "versions", "run-1", "BasicsDeskTimer.Preview.exe"), "data", script);
         Assert.True(first.Available); first.Set(true);
         Assert.Contains("-File \"" + Path.GetFullPath(script) + "\" -Mode Launch", registry.Values[AutoStartSetting.ValueName]);
         // After an update the program lives in a different folder, but the entry still counts as on.
-        var updated = new AutoStartSetting(registry, Path.Combine(Path.GetTempPath(), "versions", "run-2", "BasicsAdvancedTimer.Preview.exe"), "data", script);
+        var updated = new AutoStartSetting(registry, Path.Combine(Path.GetTempPath(), "versions", "run-2", "BasicsDeskTimer.Preview.exe"), "data", script);
         Assert.True(updated.IsEnabled);
         // Run from the dotnet host the updater route is still offered, because it does not depend on the running program.
         Assert.True(new AutoStartSetting(registry, "/usr/bin/dotnet", null, script).Available);

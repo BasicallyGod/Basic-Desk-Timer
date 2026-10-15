@@ -12,10 +12,10 @@ foreach ($definition in $ast.FindAll({ param($node) $node -is [Management.Automa
 $windowTokens = $null; $windowErrors = $null
 $null = [Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot 'Timer-Updater-Window.ps1'), [ref]$windowTokens, [ref]$windowErrors)
 if ($windowErrors.Count) { throw ($windowErrors | Out-String) }
-$Repository = 'BasicallyGod/Basic-Advanced-Timer'; $Branch = 'experimental'; $Workflow = 'avalonia-preview.yml'
+$Repository = 'BasicallyGod/Basic-Desk-Timer'; $Branch = 'experimental'; $Workflow = 'avalonia-preview.yml'
 $UpdaterDirectory = $PSScriptRoot
 $UpdaterScript = Join-Path $PSScriptRoot 'Update-TestBuild.ps1'
-$ArtifactName = 'BasicsAdvancedTimer-Windows-experimental'; $Executable = 'BasicsAdvancedTimer.Preview.exe'
+$ArtifactName = 'BasicsDeskTimer-Windows-experimental'; $Executable = 'BasicsDeskTimer.Preview.exe'
 $Root = Join-Path ([IO.Path]::GetTempPath()) ('timer-updater-tests-' + [guid]::NewGuid().ToString('N'))
 Select-Channel $Branch
 $Mode = 'Update'; $script:Downloads = 0; $script:Launches = 0; $script:FailDownload = $false; $script:BadMarker = $false
@@ -43,7 +43,7 @@ function gh {
     $destination = $args[[Array]::IndexOf($args, '--dir') + 1]
     [IO.File]::WriteAllBytes((Join-Path $destination $Executable), [byte[]]@(77, 90, 1))
     if ($script:FailDownload) { $global:LASTEXITCODE = 1; return }
-    foreach ($name in @('BasicsAdvancedTimer.Preview.dll', 'BasicsAdvancedTimer.Preview.deps.json', 'BasicsAdvancedTimer.Preview.runtimeconfig.json', 'Timer.Core.dll', 'Timer.Storage.dll', 'coreclr.dll')) {
+    foreach ($name in @('BasicsDeskTimer.Preview.dll', 'BasicsDeskTimer.Preview.deps.json', 'BasicsDeskTimer.Preview.runtimeconfig.json', 'Timer.Core.dll', 'Timer.Storage.dll', 'coreclr.dll')) {
         [IO.File]::WriteAllText((Join-Path $destination $name), 'fixture')
     }
     if (!$script:BadMarker) { [IO.File]::WriteAllText((Join-Path $destination 'test-build-support.json'), '{"schemaVersion":1,"testBuildArgument":"--test-build"}') }
@@ -95,22 +95,22 @@ try {
     Expect-Failure { Get-BuildFolder ([pscustomobject]@{ folder = '../production' }) }
     foreach ($bad in @('', '..', 'a/../b', 'x y', 'main;calc', '-flag', 'a//b', 'a/', 'x.lock')) { Expect-Failure { Assert-BranchName $bad } }
     foreach ($good in @('main', 'migration', 'feature/new-theme', 'release-1.2')) { Assert-BranchName $good }
-    # Alpha must not see or modify experimental's installed build, database, rollback or backups.
+    # Main must not see or modify experimental's installed build, database, rollback or backups.
     $experimentalRoot = $ChannelRoot; $experimentalState = $StatePath; $experimentalData = $Data
-    $Mode = 'Update'; $script:Offline = $false; $script:RunId = 20; $script:ArtifactId = 200; $Branch = 'alpha'
+    $Mode = 'Update'; $script:Offline = $false; $script:RunId = 20; $script:ArtifactId = 200; $Branch = 'main'
     Select-Channel $Branch
-    Assert ($ChannelRoot -ne $experimentalRoot -and $Data -ne $experimentalData) 'Alpha shares experimental data.'
-    Assert (!(Test-Path $StatePath)) 'Alpha inherited experimental state.'
-    Assert (!(Test-Path $Data)) 'Alpha inherited experimental data.'
+    Assert ($ChannelRoot -ne $experimentalRoot -and $Data -ne $experimentalData) 'Main shares experimental data.'
+    Assert (!(Test-Path $StatePath)) 'Main inherited experimental state.'
+    Assert (!(Test-Path $Data)) 'Main inherited experimental data.'
     Invoke-TestUpdater
-    Assert ((Read-State).current.runId -eq 20 -and (Read-State).current.branch -eq 'alpha') 'Alpha branch build was not installed.'
-    Assert ($ArtifactName -eq 'BasicsAdvancedTimer-Windows-alpha') 'Alpha artifact name is wrong.'
+    Assert ((Read-State).current.runId -eq 20 -and (Read-State).current.branch -eq 'main') 'Main branch build was not installed.'
+    Assert ($ArtifactName -eq 'BasicsDeskTimer-Windows-main') 'Main artifact name is wrong.'
     $Branch = 'experimental'; Select-Channel $Branch
-    Assert ($StatePath -eq $experimentalState -and (Read-State).current.runId -eq 10) 'Alpha changed experimental build state.'
-    Assert ((Get-Content -LiteralPath $sentinel -Raw) -eq 'persistent settings') 'Alpha touched experimental data.'
+    Assert ($StatePath -eq $experimentalState -and (Read-State).current.runId -eq 10) 'Main changed experimental build state.'
+    Assert ((Get-Content -LiteralPath $sentinel -Raw) -eq 'persistent settings') 'Main touched experimental data.'
     Assert (Test-Path -LiteralPath (Join-Path $ChannelRoot 'state.json.bak')) 'Experimental state backup is missing from its channel.'
     Assert (!(Test-Path -LiteralPath (Join-Path $Root 'state.json.bak'))) 'Channels share a state backup.'
-    $Branch = 'main'
+    $Branch = 'alpha'
     Expect-Failure { Select-Channel $Branch }
     Write-Host 'PASS: branch-separated install, data and rollback; offline launch; locking and validation.'
 } finally {
