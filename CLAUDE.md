@@ -6,8 +6,8 @@ Notes for contributors and coding assistants. The application is a C# Avalonia d
 
 | Path | Role |
 | --- | --- |
-| `migration/src/Timer.Core` | Platform-independent tracking engine (`TrackingEngine`), schedules, day maths and the theme model (`Themes.cs`). |
-| `migration/src/Timer.Storage` | `TimerDatabase` (SQLite), `TimerStore`, undo, credit review, ledger editing, week export. |
+| Shared packages | `Timer.Core` (tracking engine `TrackingEngine`, schedules, day maths, `DayNotes`, theme model) and `Timer.Storage` (`TimerDatabase`, `TimerStore`, undo, credit review, ledger editing, week export) no longer live in this repository. They are the NuGet packages `BasicallyGod.Timer.Core` and `BasicallyGod.Timer.Storage`, published from the `BasicallyGod/Basic-Timer-Core` repository to GitHub Packages (a `v<version>` tag or a manual run of its ci workflow publishes). This repo takes a release through `SharedTimerVersion` in `migration/Directory.Build.props`. Restoring needs the `PACKAGES_TOKEN` environment variable (a `read:packages` token; a repository secret in CI), read by `migration/NuGet.config`. To change the engine or storage, change that repository, release, then raise the version here. Neither package may reference Avalonia, the app or `Timer.Desk` (`SharedLibraryBoundaryTests`). |
+| `migration/src/Timer.Desk` | Alpha-only feature models (desk layout and hues, saved layouts, floating widgets, hotkey, note shorthand, pomodoro, trinkets) and `AppPrefs`, the typed view of the settings this app keeps in `SettingsExtras`. |
 | `migration/src/Timer.Desktop` | Avalonia views, `TimerModel` (UI adapter), `ThemeEngine`, styles in `App.axaml`. |
 | `migration/tests/Timer.Desktop.Tests` | xUnit tests, including headless Avalonia tests of production windows. |
 | `migration/updater` | Standalone Windows test-build updater with rollback. |
@@ -38,6 +38,8 @@ The `migration` folder name is historical and kept so updater and workflow paths
 - **Undo.** Edits are stored as splices plus hashes in `edits` and `edit_changes`, so history stays small and survives restarts.
 
 ## Storage
+
+`StoreSettings` holds only the settings every app shares. Appearance lines and JSON sections the library does not own travel in `StoreSettings.Extras` (`SettingsExtras`) and are saved back untouched, so an app keeps its own settings without the shared record growing; `AppPrefs` (Timer.Desk) reads and writes this app's lines (`dash=`, `desk-*`, `motion=`, `pillstyle=`, `capturekey=`, `floattop=`) and sections (`deskTrinkets`, `deskLayouts`, `deskFloating`) and leaves any other app's alone. This is the boundary for sharing Timer.Core and Timer.Storage with another app.
 
 `TimerDatabase` holds accounts, entries, groups, away, day_starts, running, edits, edit_changes and meta. It takes an exclusive lock, uses WAL and `user_version`, and makes daily backups. The schema is format 3 (format 2 allowed a budget per day, format 3 adds `day_notes`, notes on a day with an optional time, kept outside the undo history and edited one statement at a time through `TimerStore`'s `AddDayNote`, `UpdateDayNote` and `DeleteDayNote`), and `TimerDatabase.Upgrades` holds the numbered steps that take an older file forward after a copy is saved; a step that rebuilds a table runs with foreign keys off and is checked with `foreign_key_check` before it is kept, and an older build refuses a newer file. Dispose every `SqliteCommand` or Windows keeps the file locked, which fails tests on CI. `TimerStore` rewrites `entries` when a snapshot changes. Notes, groups and `accountsSeeded` are blobs in `meta`. The settings JSON preserves unknown sections and is swapped in atomically with a `.bak`. Sessions checkpoint every 15 seconds and recovery stops at the last checkpoint. `TimerStore` refuses a folder holding the old `AccountTimer2.ps1` or launcher, and the old CSV files are deliberately never imported. Never auto-open another app's data folder. Never commit `migration-data`, `timer.db`, settings JSON or logs (`.gitignore` excludes them).
 
@@ -79,7 +81,7 @@ Each theme is a `ThemeDefinition` (name, Light or Dark base, colour tokens, bloc
 - Pill and dashboard are separate windows sharing one model. Do not resize a visible window to change views. The dashboard is `Topmost` unless switched off in settings.
 - Headless tests: `DispatcherTimer` and animations do not tick, so test state not frames. `TextBox.TextChanged` does not fire, so listen to `PropertyChanged` on `TextBox.TextProperty`.
 - Fault-injection helper `StorageFaults` (in `EditingTests.cs`) uses triggers to make saves fail.
-- Keep the C# for `Timer.Core` and `Timer.Storage` free of UI types.
+- Keep the C# for `Timer.Core` and `Timer.Storage` (in the Basic-Timer-Core repository) free of UI types.
 
 ## Keeping builds few
 

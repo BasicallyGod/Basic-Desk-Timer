@@ -6,6 +6,13 @@ The right-click menu shows `Version 0.1.<build> (<commit>)` and the channel for 
 
 The dated Avalonia milestones below are newest first, not numbered releases. Use the [alpha commit history](https://github.com/BasicallyGod/Basic-Advanced-Timer/commits/alpha/) and [build workflow runs](https://github.com/BasicallyGod/Basic-Advanced-Timer/actions/workflows/avalonia-preview.yml) to identify a packaged build.
 
+## 15 October 2026
+
+| Change | Commit | Details |
+|---|---|---|
+| Engine and storage moved to shared packages | pending | Timer.Core and Timer.Storage are now the NuGet packages BasicallyGod.Timer.Core and BasicallyGod.Timer.Storage (0.1.0), built from the Basic-Timer-Core repository, so another app can use the same tracking engine and database. The source was identical when it moved, so nothing changes for users. |
+| Shared library boundary | pending | Alpha-only code (desk, layouts, floating widgets, hotkey, note shorthand, pomodoro, trinkets) moved out of Timer.Core into a new Timer.Desk project, and StoreSettings keeps only shared settings, with the app's own lines and sections carried in an extras bag (AppPrefs). Nothing changes for users; Core and Storage can now be shared with another app. |
+
 ## 14 October 2026
 
 | Change | Commit | Details |
