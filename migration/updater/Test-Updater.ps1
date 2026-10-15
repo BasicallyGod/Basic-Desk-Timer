@@ -95,19 +95,19 @@ try {
     Expect-Failure { Get-BuildFolder ([pscustomobject]@{ folder = '../production' }) }
     foreach ($bad in @('', '..', 'a/../b', 'x y', 'main;calc', '-flag', 'a//b', 'a/', 'x.lock')) { Expect-Failure { Assert-BranchName $bad } }
     foreach ($good in @('main', 'migration', 'feature/new-theme', 'release-1.2')) { Assert-BranchName $good }
-    # Alpha must not see or modify experimental's installed build, database, rollback or backups.
+    # Main must not see or modify experimental's installed build, database, rollback or backups.
     $experimentalRoot = $ChannelRoot; $experimentalState = $StatePath; $experimentalData = $Data
-    $Mode = 'Update'; $script:Offline = $false; $script:RunId = 20; $script:ArtifactId = 200; $Branch = 'alpha'
+    $Mode = 'Update'; $script:Offline = $false; $script:RunId = 20; $script:ArtifactId = 200; $Branch = 'main'
     Select-Channel $Branch
-    Assert ($ChannelRoot -ne $experimentalRoot -and $Data -ne $experimentalData) 'Alpha shares experimental data.'
-    Assert (!(Test-Path $StatePath)) 'Alpha inherited experimental state.'
-    Assert (!(Test-Path $Data)) 'Alpha inherited experimental data.'
+    Assert ($ChannelRoot -ne $experimentalRoot -and $Data -ne $experimentalData) 'Main shares experimental data.'
+    Assert (!(Test-Path $StatePath)) 'Main inherited experimental state.'
+    Assert (!(Test-Path $Data)) 'Main inherited experimental data.'
     Invoke-TestUpdater
-    Assert ((Read-State).current.runId -eq 20 -and (Read-State).current.branch -eq 'alpha') 'Alpha branch build was not installed.'
-    Assert ($ArtifactName -eq 'BasicsDeskTimer-Windows-alpha') 'Alpha artifact name is wrong.'
+    Assert ((Read-State).current.runId -eq 20 -and (Read-State).current.branch -eq 'main') 'Main branch build was not installed.'
+    Assert ($ArtifactName -eq 'BasicsDeskTimer-Windows-main') 'Main artifact name is wrong.'
     $Branch = 'experimental'; Select-Channel $Branch
-    Assert ($StatePath -eq $experimentalState -and (Read-State).current.runId -eq 10) 'Alpha changed experimental build state.'
-    Assert ((Get-Content -LiteralPath $sentinel -Raw) -eq 'persistent settings') 'Alpha touched experimental data.'
+    Assert ($StatePath -eq $experimentalState -and (Read-State).current.runId -eq 10) 'Main changed experimental build state.'
+    Assert ((Get-Content -LiteralPath $sentinel -Raw) -eq 'persistent settings') 'Main touched experimental data.'
     Assert (Test-Path -LiteralPath (Join-Path $ChannelRoot 'state.json.bak')) 'Experimental state backup is missing from its channel.'
     Assert (!(Test-Path -LiteralPath (Join-Path $Root 'state.json.bak'))) 'Channels share a state backup.'
     $Branch = 'main'

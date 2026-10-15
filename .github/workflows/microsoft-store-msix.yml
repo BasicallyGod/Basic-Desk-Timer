@@ -1,10 +1,7 @@
 name: Microsoft Store release MSIX
 
+# The desk app is not in the Store yet, so this runs only when started by hand (Actions, Run workflow).
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:

@@ -29,7 +29,7 @@ function Assert-BranchName([string]$Name) {
 
 function Select-Channel([string]$Name) {
     Assert-BranchName $Name
-    if ($Name -notin @('experimental', 'alpha')) { throw 'Select experimental or alpha. Stable releases are installed through Microsoft Store.' }
+    if ($Name -notin @('experimental', 'main')) { throw 'Select experimental or main.' }
     $script:ChannelRoot = Join-Path (Join-Path $Root 'channels') $Name
     $script:Versions = Join-Path $ChannelRoot 'versions'
     $script:Data = Join-Path $ChannelRoot 'data'

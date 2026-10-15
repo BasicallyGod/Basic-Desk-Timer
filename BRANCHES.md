@@ -1,35 +1,23 @@
 # Branches and builds
 
-Three long-lived branches keep Stable, Experimental and Alpha releases separate.
+Two long-lived branches keep everyday testing and the tested release line apart. Risky experiments live on a `feature/...` branch until they are ready.
 
 | Branch | Purpose | Automatic artifact | Data |
 | --- | --- | --- | --- |
-| `main` | Stable app submitted to Microsoft Store | `BasicsDeskTimer-MSIX-Store` (unsigned MSIX) | Windows packaged per-user local data |
-| `experimental` | Everyday feature and regression testing | `BasicsDeskTimer-Windows-experimental` (portable ZIP) | `test-install/channels/experimental/data` |
-| `alpha` | Prototypes and potentially breaking changes | `BasicsDeskTimer-Windows-alpha` (portable ZIP) | `test-install/channels/alpha/data` |
+| `main` | The tested release line and the repository default. Only changes that have been tried on `experimental` arrive here, by pull request. | `BasicsDeskTimer-Windows-main` (portable ZIP) | `test-install/channels/main/data` |
+| `experimental` | Everyday feature and regression testing. | `BasicsDeskTimer-Windows-experimental` (portable ZIP) | `test-install/channels/experimental/data` |
 
-`main` remains the repository default and the **release gate**. The old `migration` branch and the `feature/microsoft-store-packaging` branch have been removed; their work lives in `experimental` and `main`. Do not recreate them.
-
-The Store packaging and the release workflow are merged into `main`. Installed-app checks on a real Windows machine (first launch, persistence, tray, startup task, export, update and backup handling) are still needed before each Store submission.
+There is no Store build yet. `microsoft-store-msix.yml` runs only when started by hand, and the packaging files are kept so a Store release can be switched on later.
 
 ## Daily workflow
 
-1. Develop on `experimental`, or make a temporary `feature/...` branch from it for an isolated change. Use `alpha` for larger/riskier experiments.
-2. Push changes; automatic tests and native smoke tests run. Select the appropriate channel using **Timer Updater.cmd**. Never test an alpha database against the experimental branch.
-3. Promote alpha work through a pull request into `experimental`. Every merge into `alpha` or `experimental` builds a portable ZIP, so gather several related changes on one `feature/...` branch and merge them together instead of opening a pull request for each. Build the next candidate when you are about to test it, not after every change, and sync `experimental` only when a candidate is worth testing. Builds are kept for 14 days and rendered previews are kept only when a test fails.
-4. When experimental is thoroughly tested, open a pull request from `experimental` into `main`. Review the diff and require successful checks. Merging this PR produces a Store MSIX from the exact main commit.
-5. Download `BasicsDeskTimer-MSIX-Store` from the **successful main workflow run** in GitHub Actions, extract the ZIP and upload the enclosed `BasicsDeskTimer-Store-unsigned.msix` to the existing Partner Center submission. Create a Git tag for the actual submitted commit, e.g. `v1.0.1`.
-6. Submit and await certification. Store installs and updates are handled through the Store; do not use the testing updater for production.
-
-The Store workflow is deliberately restricted to `main`. Pull requests to `main` run tests **without** generating a publishable MSIX. Alpha and experimental builds never carry the registered Store identity.
-
-## Version labels and developer tools
-
-Stable builds show a normal version and retain the release MSIX identity. Experimental and Alpha builds show their channel beside the version and include the sample-data demo and overtime testing controls. The Store build hides demo controls and rejects the `--demo` argument; all builds retain normal version visibility.
+1. Develop on a `feature/...` branch from `experimental`, or on `experimental` itself. Push changes; the tests and native smoke tests run. Pick the channel with **Timer Updater.cmd**. Never test a `main` database against the `experimental` build, or the other way round.
+2. Every merge into `experimental` or `main` builds a portable ZIP, so gather related changes on one `feature/...` branch and merge them together instead of opening a pull request for each. Builds are kept for 14 days and rendered previews are kept only when a test fails.
+3. When `experimental` has been tested, open a pull request from `experimental` into `main`, review the diff and require successful checks.
+4. The shared engine is a separate package. A change to tracking or storage is made in `BasicallyGod/Basic-Timer-Core`, released with a tag, and taken here by raising `SharedTimerVersion` in `migration/Directory.Build.props`. A storage change raises the database format, which is one way: an older build refuses a newer file.
 
 ## Safety
 
-- Configure main branch protections under **Settings → Branches / Rulesets**: require passing automated checks, disallow force pushes and deletion, and use PRs to merge into main. Administrative access might be required to set these rules.
+- Configure `main` protections under **Settings → Branches / Rulesets**: require passing checks, disallow force pushes and deletion, and merge by pull request.
 - Back up stored data before changing database schemas; rollback is not a schema downgrade.
-- Run the installation, startup, export and data-persistence checks on the packaged build before each Store submission. The existing Partner Center submission is not changed by GitHub commits.
-- The older updater's `test-install/data` tree is retained without automatic migration.
+- This app and Basic's Advanced Timer keep separate data and never open each other's files.

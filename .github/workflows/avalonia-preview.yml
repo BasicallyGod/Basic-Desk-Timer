@@ -1,10 +1,10 @@
-name: Development builds (experimental and alpha)
+name: Desk builds (main and experimental)
 
 on:
   push:
-    branches: [experimental, alpha]
+    branches: [main, experimental]
   pull_request:
-    branches: [experimental, alpha]
+    branches: [main, experimental]
   workflow_dispatch:
 
 concurrency:
@@ -99,11 +99,11 @@ jobs:
           path: artifacts/windows-preview/
           if-no-files-found: error
           retention-days: 14
-      - name: Upload alpha Windows build
-        if: runner.os == 'Windows' && github.ref_name == 'alpha' && github.event_name != 'pull_request'
+      - name: Upload main Windows build
+        if: runner.os == 'Windows' && github.ref_name == 'main' && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: BasicsDeskTimer-Windows-alpha
+          name: BasicsDeskTimer-Windows-main
           path: artifacts/windows-preview/
           if-no-files-found: error
           retention-days: 14
