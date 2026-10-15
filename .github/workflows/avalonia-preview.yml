@@ -71,7 +71,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $preview = Start-Process ./artifacts/windows-preview/BasicsAdvancedTimer.Preview.exe -ArgumentList '--smoke-test', '--test-build' -PassThru -RedirectStandardError "$env:RUNNER_TEMP/timer-native-error.log"
+          $preview = Start-Process ./artifacts/windows-preview/BasicsDeskTimer.Preview.exe -ArgumentList '--smoke-test', '--test-build' -PassThru -RedirectStandardError "$env:RUNNER_TEMP/timer-native-error.log"
           if (-not $preview.WaitForExit(30000)) {
             $preview.Kill()
             throw 'Published preview did not finish its startup check.'
@@ -85,7 +85,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $demo = Start-Process ./artifacts/windows-preview/BasicsAdvancedTimer.Preview.exe -ArgumentList '--smoke-test', '--demo' -PassThru
+          $demo = Start-Process ./artifacts/windows-preview/BasicsDeskTimer.Preview.exe -ArgumentList '--smoke-test', '--demo' -PassThru
           if (-not $demo.WaitForExit(30000)) {
             $demo.Kill()
             throw 'Demo did not finish its startup check.'
@@ -95,7 +95,7 @@ jobs:
         if: runner.os == 'Windows' && github.ref_name == 'experimental' && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: BasicsAdvancedTimer-Windows-experimental
+          name: BasicsDeskTimer-Windows-experimental
           path: artifacts/windows-preview/
           if-no-files-found: error
           retention-days: 14
@@ -103,7 +103,7 @@ jobs:
         if: runner.os == 'Windows' && github.ref_name == 'alpha' && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: BasicsAdvancedTimer-Windows-alpha
+          name: BasicsDeskTimer-Windows-alpha
           path: artifacts/windows-preview/
           if-no-files-found: error
           retention-days: 14

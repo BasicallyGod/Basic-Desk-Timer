@@ -14,7 +14,7 @@ public static class Program
                 // Installed MSIX files are read-only, so a packaged build keeps its diagnostics in per-user data. The portable build
                 // stays portable and writes beside its program, as before.
                 var folder = PackageEnvironment.IsPackaged()
-                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BasicsAdvancedTimer", "Logs")
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BasicsDeskTimer", "Logs")
                     : AppContext.BaseDirectory;
                 Directory.CreateDirectory(folder);
                 File.WriteAllText(Path.Combine(folder, PackageEnvironment.IsPackaged() ? "startup-error.log" : "migration-startup-error.log"), e.ExceptionObject.ToString());

@@ -12,10 +12,10 @@ foreach ($definition in $ast.FindAll({ param($node) $node -is [Management.Automa
 $windowTokens = $null; $windowErrors = $null
 $null = [Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot 'Timer-Updater-Window.ps1'), [ref]$windowTokens, [ref]$windowErrors)
 if ($windowErrors.Count) { throw ($windowErrors | Out-String) }
-$Repository = 'BasicallyGod/Basic-Advanced-Timer'; $Branch = 'experimental'; $Workflow = 'avalonia-preview.yml'
+$Repository = 'BasicallyGod/Basic-Desk-Timer'; $Branch = 'experimental'; $Workflow = 'avalonia-preview.yml'
 $UpdaterDirectory = $PSScriptRoot
 $UpdaterScript = Join-Path $PSScriptRoot 'Update-TestBuild.ps1'
-$ArtifactName = 'BasicsAdvancedTimer-Windows-experimental'; $Executable = 'BasicsAdvancedTimer.Preview.exe'
+$ArtifactName = 'BasicsDeskTimer-Windows-experimental'; $Executable = 'BasicsDeskTimer.Preview.exe'
 $Root = Join-Path ([IO.Path]::GetTempPath()) ('timer-updater-tests-' + [guid]::NewGuid().ToString('N'))
 Select-Channel $Branch
 $Mode = 'Update'; $script:Downloads = 0; $script:Launches = 0; $script:FailDownload = $false; $script:BadMarker = $false
@@ -43,7 +43,7 @@ function gh {
     $destination = $args[[Array]::IndexOf($args, '--dir') + 1]
     [IO.File]::WriteAllBytes((Join-Path $destination $Executable), [byte[]]@(77, 90, 1))
     if ($script:FailDownload) { $global:LASTEXITCODE = 1; return }
-    foreach ($name in @('BasicsAdvancedTimer.Preview.dll', 'BasicsAdvancedTimer.Preview.deps.json', 'BasicsAdvancedTimer.Preview.runtimeconfig.json', 'Timer.Core.dll', 'Timer.Storage.dll', 'coreclr.dll')) {
+    foreach ($name in @('BasicsDeskTimer.Preview.dll', 'BasicsDeskTimer.Preview.deps.json', 'BasicsDeskTimer.Preview.runtimeconfig.json', 'Timer.Core.dll', 'Timer.Storage.dll', 'coreclr.dll')) {
         [IO.File]::WriteAllText((Join-Path $destination $name), 'fixture')
     }
     if (!$script:BadMarker) { [IO.File]::WriteAllText((Join-Path $destination 'test-build-support.json'), '{"schemaVersion":1,"testBuildArgument":"--test-build"}') }
@@ -104,7 +104,7 @@ try {
     Assert (!(Test-Path $Data)) 'Alpha inherited experimental data.'
     Invoke-TestUpdater
     Assert ((Read-State).current.runId -eq 20 -and (Read-State).current.branch -eq 'alpha') 'Alpha branch build was not installed.'
-    Assert ($ArtifactName -eq 'BasicsAdvancedTimer-Windows-alpha') 'Alpha artifact name is wrong.'
+    Assert ($ArtifactName -eq 'BasicsDeskTimer-Windows-alpha') 'Alpha artifact name is wrong.'
     $Branch = 'experimental'; Select-Channel $Branch
     Assert ($StatePath -eq $experimentalState -and (Read-State).current.runId -eq 10) 'Alpha changed experimental build state.'
     Assert ((Get-Content -LiteralPath $sentinel -Raw) -eq 'persistent settings') 'Alpha touched experimental data.'

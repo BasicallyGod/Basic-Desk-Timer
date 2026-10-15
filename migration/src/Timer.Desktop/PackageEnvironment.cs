@@ -34,7 +34,7 @@ public static class TimerDataFolders
         {
             if (string.IsNullOrWhiteSpace(localAppData))
                 throw new InvalidOperationException("Windows did not provide a per-user application data folder.");
-            return Path.Combine(localAppData, "BasicsAdvancedTimer");
+            return Path.Combine(localAppData, "BasicsDeskTimer");
         }
         return Path.Combine(executableDirectory, "migration-data");
     }

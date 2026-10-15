@@ -4,9 +4,9 @@ Three long-lived branches keep Stable, Experimental and Alpha releases separate.
 
 | Branch | Purpose | Automatic artifact | Data |
 | --- | --- | --- | --- |
-| `main` | Stable app submitted to Microsoft Store | `BasicsAdvancedTimer-MSIX-Store` (unsigned MSIX) | Windows packaged per-user local data |
-| `experimental` | Everyday feature and regression testing | `BasicsAdvancedTimer-Windows-experimental` (portable ZIP) | `test-install/channels/experimental/data` |
-| `alpha` | Prototypes and potentially breaking changes | `BasicsAdvancedTimer-Windows-alpha` (portable ZIP) | `test-install/channels/alpha/data` |
+| `main` | Stable app submitted to Microsoft Store | `BasicsDeskTimer-MSIX-Store` (unsigned MSIX) | Windows packaged per-user local data |
+| `experimental` | Everyday feature and regression testing | `BasicsDeskTimer-Windows-experimental` (portable ZIP) | `test-install/channels/experimental/data` |
+| `alpha` | Prototypes and potentially breaking changes | `BasicsDeskTimer-Windows-alpha` (portable ZIP) | `test-install/channels/alpha/data` |
 
 `main` remains the repository default and the **release gate**. The old `migration` branch and the `feature/microsoft-store-packaging` branch have been removed; their work lives in `experimental` and `main`. Do not recreate them.
 
@@ -18,7 +18,7 @@ The Store packaging and the release workflow are merged into `main`. Installed-a
 2. Push changes; automatic tests and native smoke tests run. Select the appropriate channel using **Timer Updater.cmd**. Never test an alpha database against the experimental branch.
 3. Promote alpha work through a pull request into `experimental`. Every merge into `alpha` or `experimental` builds a portable ZIP, so gather several related changes on one `feature/...` branch and merge them together instead of opening a pull request for each. Build the next candidate when you are about to test it, not after every change, and sync `experimental` only when a candidate is worth testing. Builds are kept for 14 days and rendered previews are kept only when a test fails.
 4. When experimental is thoroughly tested, open a pull request from `experimental` into `main`. Review the diff and require successful checks. Merging this PR produces a Store MSIX from the exact main commit.
-5. Download `BasicsAdvancedTimer-MSIX-Store` from the **successful main workflow run** in GitHub Actions, extract the ZIP and upload the enclosed `BasicsAdvancedTimer-Store-unsigned.msix` to the existing Partner Center submission. Create a Git tag for the actual submitted commit, e.g. `v1.0.1`.
+5. Download `BasicsDeskTimer-MSIX-Store` from the **successful main workflow run** in GitHub Actions, extract the ZIP and upload the enclosed `BasicsDeskTimer-Store-unsigned.msix` to the existing Partner Center submission. Create a Git tag for the actual submitted commit, e.g. `v1.0.1`.
 6. Submit and await certification. Store installs and updates are handled through the Store; do not use the testing updater for production.
 
 The Store workflow is deliberately restricted to `main`. Pull requests to `main` run tests **without** generating a publishable MSIX. Alpha and experimental builds never carry the registered Store identity.

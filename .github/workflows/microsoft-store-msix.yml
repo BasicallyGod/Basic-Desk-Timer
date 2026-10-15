@@ -36,7 +36,7 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         shell: pwsh
         env:
-          STORE_PACKAGE_NAME: Basically.BasicsAdvancedTimer
+          STORE_PACKAGE_NAME: Basically.BasicsDeskTimer
           STORE_PUBLISHER: CN=BF422802-B4CA-4B00-A09A-2EDA3315C0DE
           STORE_PUBLISHER_DISPLAY_NAME: Basically
         run: |
@@ -51,6 +51,6 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
-          name: BasicsAdvancedTimer-MSIX-Store
-          path: artifacts/msix/BasicsAdvancedTimer-Store-unsigned.msix
+          name: BasicsDeskTimer-MSIX-Store
+          path: artifacts/msix/BasicsDeskTimer-Store-unsigned.msix
           if-no-files-found: error

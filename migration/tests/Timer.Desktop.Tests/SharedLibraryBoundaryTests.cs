@@ -14,7 +14,7 @@ public sealed class SharedLibraryBoundaryTests
         foreach (var assembly in new[] { typeof(TrackingEngine).Assembly, typeof(TimerStore).Assembly })
         {
             var references = assembly.GetReferencedAssemblies().Select(a => a.Name!).ToList();
-            Assert.DoesNotContain(references, name => name.StartsWith("Timer.Desk", StringComparison.Ordinal) || name.StartsWith("Avalonia", StringComparison.Ordinal) || name.StartsWith("BasicsAdvancedTimer", StringComparison.Ordinal));
+            Assert.DoesNotContain(references, name => name.StartsWith("Timer.Desk", StringComparison.Ordinal) || name.StartsWith("Avalonia", StringComparison.Ordinal) || name.StartsWith("BasicsDeskTimer", StringComparison.Ordinal));
         }
         Assert.Contains(typeof(TimerStore).Assembly.GetReferencedAssemblies().Select(a => a.Name), n => n == "Timer.Core"); // And Storage builds on Core, not the other way round.
         Assert.DoesNotContain(typeof(TrackingEngine).Assembly.GetReferencedAssemblies().Select(a => a.Name), n => n == "Timer.Storage");

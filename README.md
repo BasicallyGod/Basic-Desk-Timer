@@ -6,8 +6,8 @@ The earlier PowerShell application (v2.32) has been retired. Its source remains 
 
 ## Getting started
 
-1. Open the latest successful run of the [Development builds workflow](https://github.com/BasicallyGod/Basic-Advanced-Timer/actions/workflows/avalonia-preview.yml) and download **BasicsAdvancedTimer-Windows-experimental** (or the alpha artifact if intentionally testing alpha).
-2. Extract the whole ZIP into its own folder and run `BasicsAdvancedTimer.Preview.exe`. Keep its DLLs together.
+1. Open the latest successful run of the [Development builds workflow](https://github.com/BasicallyGod/Basic-Advanced-Timer/actions/workflows/avalonia-preview.yml) and download **BasicsDeskTimer-Windows-experimental** (or the alpha artifact if intentionally testing alpha).
+2. Extract the whole ZIP into its own folder and run `BasicsDeskTimer.Preview.exe`. Keep its DLLs together.
 3. To update, copy [migration/updater](migration/updater/README.md) somewhere writable and run `Timer Updater.cmd`. Choose the experimental or alpha channel, then install the newest successful build and roll back if needed. Each channel keeps its own data.
 
 Run `Start-Demo.cmd` to try the app with sample accounts and history, without touching real data. Data is saved to a `migration-data` folder beside the executable, or to a folder you choose with `--data-dir`.

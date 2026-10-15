@@ -28,7 +28,7 @@ Every channel uses a separately installed executable, database, settings, backup
 
 Data is **not copied or automatically migrated between channels**. If you used an older updater, its `test-install/data`, `versions` and `state.json` remain untouched as legacy data. Back them up; migrate manually only with all timers closed. Never use a production Microsoft Store data folder for experiments.
 
-Each successful push to `experimental` generates `BasicsAdvancedTimer-Windows-experimental`, and a push to `alpha` generates `BasicsAdvancedTimer-Windows-alpha`. The updater chooses the artifact corresponding to the selected branch, refusing pull-request merge artifacts or failed runs. The app receives `--test-build --data-dir` so it cannot open the Store database.
+Each successful push to `experimental` generates `BasicsDeskTimer-Windows-experimental`, and a push to `alpha` generates `BasicsDeskTimer-Windows-alpha`. The updater chooses the artifact corresponding to the selected branch, refusing pull-request merge artifacts or failed runs. The app receives `--test-build --data-dir` so it cannot open the Store database.
 
 Updates stage new files, validate them, and save data snapshots before switching. **Rollback restores only the executable version, not database format.** If an alpha version changes the database format, restore its matching backup manually after closing the app.
 

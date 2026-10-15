@@ -47,11 +47,11 @@ public sealed class AutoStartSetting : IAutoStart
 {
     // Development channels can start independently without overwriting one another's Run-key entry.
 #if ALPHA_BUILD
-    public const string ValueName = "BasicsAdvancedTimerAlpha";
+    public const string ValueName = "BasicsDeskTimerAlpha";
 #elif EXPERIMENTAL_BUILD
-    public const string ValueName = "BasicsAdvancedTimerExperimental";
+    public const string ValueName = "BasicsDeskTimerExperimental";
 #else
-    public const string ValueName = "BasicsAdvancedTimer";
+    public const string ValueName = "BasicsDeskTimer";
 #endif
     private readonly IStartupRegistry registry;
     private readonly string? executable, dataFolder, updaterScript;
@@ -129,7 +129,7 @@ public static class PackagedStartup
 // Talks to the Windows startup task named in AppxManifest.template.xml. The calls are quick, so they wait for the answer instead of making the menu asynchronous.
 internal sealed class WinRtStartupTaskHost : IStartupTaskHost
 {
-    private const string TaskId = "BasicsAdvancedTimerStartup";
+    private const string TaskId = "BasicsDeskTimerStartup";
     private static global::Windows.ApplicationModel.StartupTask Task()
         => global::Windows.ApplicationModel.StartupTask.GetAsync(TaskId).AsTask().GetAwaiter().GetResult();
     private static StartupState Map(global::Windows.ApplicationModel.StartupTaskState state) => state switch

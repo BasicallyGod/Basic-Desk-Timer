@@ -2,6 +2,8 @@
 
 Notes for contributors and coding assistants. The application is a C# Avalonia desktop app on .NET 8, always on top, for tracking time against client accounts and preparing timesheets. It must run without installs or administrator rights. The earlier PowerShell/WinForms app (v2.32) was removed from the tree and lives in Git history.
 
+This repository is the desk app, split from `BasicallyGod/Basic-Advanced-Timer` (its `alpha` branch, with full history). The two are separate applications with their own names (`BasicsDeskTimer`), data folders, autostart entries, packaging identity and updater feed, so they never open each other's data. Both run on the shared engine packages from `BasicallyGod/Basic-Timer-Core`. Branch and release channels here still follow the older three-channel text below until `BRANCHES.md` is rewritten for this repo.
+
 ## Layout
 
 | Path | Role |
@@ -12,7 +14,7 @@ Notes for contributors and coding assistants. The application is a C# Avalonia d
 | `migration/tests/Timer.Desktop.Tests` | xUnit tests, including headless Avalonia tests of production windows. |
 | `migration/updater` | Standalone Windows test-build updater with rollback. |
 | `migration/packaging` | MSIX packaging for the Microsoft Store (manifest template, `build-msix.ps1`, and `StoreAssets`, the tile and logo PNGs cut from the app icon). Packaged builds keep data under `%LOCALAPPDATA%` via `PackageEnvironment`; portable builds keep it beside the exe. Store builds compile for `net8.0-windows10.0.19041.0` (`StorePackage=true`, `STORE_PACKAGE` defined) so the Start with Windows menu item can use the WinRT startup task; everyday builds stay `net8.0`. |
-| `.github/workflows/microsoft-store-msix.yml` | Store release workflow for `main`. Pull requests compile the Store target and run tests only; a push to `main` builds the unsigned `BasicsAdvancedTimer-MSIX-Store` package. |
+| `.github/workflows/microsoft-store-msix.yml` | Store release workflow for `main`. Pull requests compile the Store target and run tests only; a push to `main` builds the unsigned `BasicsDeskTimer-MSIX-Store` package. |
 | `.github/workflows/avalonia-preview.yml` | Development builds for `experimental` and `alpha`: updater tests, then app tests on Windows (Linux and macOS are left out for now), then a channel-named portable Windows ZIP. |
 | `BRANCHES.md` | The three release channels and how changes are promoted. |
 | `README.md`, `migration/README.md`, `CHANGELOG.md` | Overview, user guide and architecture, history. |

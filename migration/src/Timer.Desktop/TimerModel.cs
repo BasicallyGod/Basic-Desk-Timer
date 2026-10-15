@@ -714,7 +714,7 @@ public sealed class TimerModel : INotifyPropertyChanged
             var chosen = day ?? SelectedDate;
             var export = wholeMonth ? WeekExport.ForMonth(Editor, Engine, chosen) : new WeekExport(Editor, Engine, WeekStart(chosen));
             if (store is not null) export.VerifyAgainst(store.Database);
-            ExportPath = export.Write(store?.ExportDirectory ?? Path.Combine(Path.GetTempPath(), "BasicsAdvancedTimer-demo-exports"), ReviewAccounts.Select(a => a.Name));
+            ExportPath = export.Write(store?.ExportDirectory ?? Path.Combine(Path.GetTempPath(), "BasicsDeskTimer-demo-exports"), ReviewAccounts.Select(a => a.Name));
             EditError = null; Notify(); return true;
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException or InvalidDataException)
