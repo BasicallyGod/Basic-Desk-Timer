@@ -6,6 +6,12 @@ The right-click menu shows `Version 0.1.<build> (<commit>)` and the channel for 
 
 The dated Avalonia milestones below are newest first, not numbered releases. Use the [alpha commit history](https://github.com/BasicallyGod/Basic-Advanced-Timer/commits/alpha/) and [build workflow runs](https://github.com/BasicallyGod/Basic-Advanced-Timer/actions/workflows/avalonia-preview.yml) to identify a packaged build.
 
+## 16 October 2026
+
+| Change | Commit | Details |
+|---|---|---|
+| Takes the shared engine 0.2.0 | pending | The note shorthand, the #Tag rule and the shortcut parser now come from the shared Timer.Core package (0.2.0) instead of this app's own copies, so the dashboard app uses the same code. Nothing changes for users. |
+
 ## 15 October 2026
 
 | Change | Commit | Details |
