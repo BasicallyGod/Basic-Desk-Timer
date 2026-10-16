@@ -23,7 +23,6 @@ public static class Trinkets
 {
     public const int PostItCount = 3;
     public static readonly IReadOnlyList<string> PostItColours = new[] { "lemon", "lilac", "rose", "sky", "mint" };
-    private static readonly Regex Tag = new(@"(?:^|\s)#([\p{L}\p{N}_-]+)", RegexOptions.Compiled);
 
     /// <summary>
     /// Splits a typed to-do into its words and the account a #Tag names. The tag is the account's name with its spaces taken out, in any
@@ -40,19 +39,7 @@ public static class Trinkets
     /// Finds the first #Tag in some words that names exactly one account (the account's name with its spaces taken out, in any case, or the start of
     /// one when only a single account begins that way), with where the tag sits. The same rule serves to-dos and notes, so one shorthand means one thing.
     /// </summary>
-    public static (string Account, int Index, int Length, string Tag)? FindAccountTag(string typed, IEnumerable<string> accounts)
-    {
-        var names = accounts.Where(n => !BreakAccount.Is(n)).ToList();
-        foreach (Match match in Tag.Matches(typed))
-        {
-            var tag = match.Groups[1].Value;
-            string Squash(string name) => new string(name.Where(c => !char.IsWhiteSpace(c)).ToArray());
-            var exact = names.Where(n => Squash(n).Equals(tag, StringComparison.OrdinalIgnoreCase)).ToList();
-            var starts = exact.Count > 0 ? exact : names.Where(n => Squash(n).StartsWith(tag, StringComparison.OrdinalIgnoreCase)).ToList();
-            if (starts.Count == 1) return (starts[0], match.Index, match.Length, tag);
-        }
-        return null;
-    }
+    public static (string Account, int Index, int Length, string Tag)? FindAccountTag(string typed, IEnumerable<string> accounts) => AccountTags.Find(typed, accounts);
 
     public static string ToJson(TrinketData data) => JsonSerializer.Serialize(data);
 
